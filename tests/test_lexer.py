@@ -73,3 +73,76 @@ class LexerTest(TestCase):
         ]
 
         self.assertEqual(tokens, expected_tokens)
+
+    def test_assingment(self) -> None:
+        source: str = 'int value = 4;'
+        lexer: Lexer = Lexer(source)
+
+        tokens: List[Token] = []
+
+        for _ in range(5):
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+            Token(TokenType.LET_INT, 'int'),
+            Token(TokenType.IDENTIFIER, 'value'),
+            Token(TokenType.ASSIGN, '='),
+            Token(TokenType.INT, '4'),
+            Token(TokenType.SEMICOLON, ';')
+        ]
+
+        self.assertEqual(tokens, expected_tokens)
+
+    def test_procedure_declaration(self) -> None:
+        source: str = '''
+            void add(int x, int y) {
+                x+y;
+            }
+        '''
+        lexer: Lexer = Lexer(source)
+
+        tokens: List[Token] = []
+
+        for _ in range(15):
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+            Token(TokenType.VOID, 'void'),
+            Token(TokenType.IDENTIFIER, 'add'),
+            Token(TokenType.LPAREN, '('),
+            Token(TokenType.LET_INT, 'int'),
+            Token(TokenType.IDENTIFIER, 'x'),
+            Token(TokenType.COMMA, ','),
+            Token(TokenType.LET_INT, 'int'),
+            Token(TokenType.IDENTIFIER, 'y'),
+            Token(TokenType.RPAREN, ')'),
+            Token(TokenType.LBRACE, '{'),
+            Token(TokenType.IDENTIFIER, 'x'),
+            Token(TokenType.PLUS, '+'),
+            Token(TokenType.IDENTIFIER, 'y'),
+            Token(TokenType.SEMICOLON, ';'),
+            Token(TokenType.RBRACE, '}')
+        ]
+
+        self.assertEqual(tokens, expected_tokens)
+
+    def test_procedure_call(self) -> None:
+        source: str = '     add(x, y);'
+        lexer: Lexer = Lexer(source)
+
+        tokens: List[Token] = []
+
+        for _ in range(7):
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+            Token(TokenType.IDENTIFIER, 'add'),
+            Token(TokenType.LPAREN, '('),
+            Token(TokenType.IDENTIFIER, 'x'),
+            Token(TokenType.COMMA, ','),
+            Token(TokenType.IDENTIFIER, 'y'),
+            Token(TokenType.RPAREN, ')'),
+            Token(TokenType.SEMICOLON, ';')
+        ]
+
+        self.assertEqual(tokens, expected_tokens)
