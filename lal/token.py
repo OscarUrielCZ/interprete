@@ -5,19 +5,31 @@ from typing import (NamedTuple, Dict)
 class TokenType(Enum):
     ASSIGN = auto()
     COMMA = auto()
-    DECLARATION = auto()
+    # DECLARATION = auto()
+    DIVISION = auto()
+    ELSE = auto()
     EOF = auto()
-    FUNCTION = auto()
+    EQ = auto()
+    FALSE = auto()
+    GT = auto()
     IDENTIFIER = auto()
+    IF = auto()
     ILLEGAL = auto()
     INT = auto()
     LBRACE = auto()
     LET_INT = auto()
     LPAREN = auto()
+    LT = auto()
+    MINUS = auto()
+    MULTIPLICATION = auto()
+    NEGATION = auto()
+    NOT_EQ = auto()
     PLUS = auto()
     RBRACE = auto()
+    RETURN = auto()
     RPAREN = auto()
     SEMICOLON = auto()
+    TRUE = auto()
     VOID = auto()
 
 class Token(NamedTuple):
@@ -29,7 +41,12 @@ class Token(NamedTuple):
 
 def lookup_token_type(value: str) -> TokenType:
     keywords: Dict[str, TokenType] = {
+        'else': TokenType.ELSE,
+        'false': TokenType.FALSE,
+        'if': TokenType.IF,
         'int': TokenType.LET_INT,
+        'return': TokenType.RETURN,
+        'true': TokenType.TRUE,
         'void': TokenType.VOID
     }
 
