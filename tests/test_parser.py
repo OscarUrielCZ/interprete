@@ -56,3 +56,13 @@ class ParserTest(TestCase):
         expected_names: List[str] = ["foo", "eg", "dog"]
 
         self.assertEquals(names, expected_names)
+
+    def test_unexpected_tokens(self) -> None:
+        source: str = "int a 5;"
+
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program = parser.parse_program()
+
+        self.assertEquals(len(parser.errors), 1)
