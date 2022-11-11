@@ -40,8 +40,8 @@ class Identifier(Expression):
 class LetStatement(Statement):
     def __init__(self,
                  token: Token,
-                 name: Optional[Identifier],
-                 value: Optional[Expression]) -> None:
+                 name: Optional[Identifier] = None,
+                 value: Optional[Expression] = None) -> None:
         super().__init__(token)
         self.name = name
         self.value = value

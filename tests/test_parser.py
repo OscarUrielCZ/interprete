@@ -1,4 +1,5 @@
 from unittest import TestCase
+from typing import (cast, List)
 
 from lal.ast import (Program, LetStatement)
 from lal.lexer import Lexer
@@ -30,5 +31,28 @@ class ParserTest(TestCase):
         self.assertEquals(len(program.statements), 3)
 
         for statement in program.statements:
-            self.assertEquals(statement.token_literal(), "variable")
+            self.assertEquals(statement.token_literal(), "int")
             self.assertIsInstance(statement, LetStatement)
+
+    def test_identifier_names(self) -> None:
+        source: str = """
+            int foo = 10;
+            int eg = 222;
+            int dog = 4;
+        """
+
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program = parser.parse_program()
+
+        names: List[str] = []
+
+        for statement in program.statements:
+            let_statement = cast(LetStatement, statement)
+            assert let_statement.name is not None
+            names.append(let_statement.name.value)
+
+        expected_names: List[str] = ["foo", "eg", "dog"]
+
+        self.assertEquals(names, expected_names)
