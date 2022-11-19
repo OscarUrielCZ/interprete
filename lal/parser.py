@@ -82,7 +82,7 @@ class Parser:
 
     def _parse_statement(self) -> Optional[Statement]:
         assert self._current_token is not None
-        if self._current_token.token_type == TokenType.LET_INT:
+        if self._current_token.token_type == TokenType.LET:
             return self._parse_let_statement()
         elif self._current_token.token_type == TokenType.RETURN:
             return self._parse_return_statement()

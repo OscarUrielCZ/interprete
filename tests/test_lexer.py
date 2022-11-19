@@ -90,7 +90,7 @@ class LexerTest(TestCase):
             tokens.append(lexer.next_token())
 
         expected_tokens: List[Token] = [
-            Token(TokenType.LET_INT, 'int'),
+            Token(TokenType.LET, 'int'),
             Token(TokenType.IDENTIFIER, 'value'),
             Token(TokenType.ASSIGN, '='),
             Token(TokenType.INT, '4'),
@@ -116,10 +116,10 @@ class LexerTest(TestCase):
             Token(TokenType.VOID, 'void'),
             Token(TokenType.IDENTIFIER, 'add'),
             Token(TokenType.LPAREN, '('),
-            Token(TokenType.LET_INT, 'int'),
+            Token(TokenType.LET, 'int'),
             Token(TokenType.IDENTIFIER, 'x'),
             Token(TokenType.COMMA, ','),
-            Token(TokenType.LET_INT, 'int'),
+            Token(TokenType.LET, 'int'),
             Token(TokenType.IDENTIFIER, 'y'),
             Token(TokenType.RPAREN, ')'),
             Token(TokenType.LBRACE, '{'),

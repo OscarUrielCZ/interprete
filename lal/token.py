@@ -17,7 +17,7 @@ class TokenType(Enum):
     ILLEGAL = auto()
     INT = auto()
     LBRACE = auto()
-    LET_INT = auto()
+    LET = auto()
     LPAREN = auto()
     LT = auto()
     MINUS = auto()
@@ -44,7 +44,7 @@ def lookup_token_type(value: str) -> TokenType:
         'else': TokenType.ELSE,
         'false': TokenType.FALSE,
         'if': TokenType.IF,
-        'int': TokenType.LET_INT,
+        'int': TokenType.LET,
         'return': TokenType.RETURN,
         'true': TokenType.TRUE,
         'void': TokenType.VOID
