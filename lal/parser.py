@@ -1,8 +1,20 @@
-from typing import (List, Optional)
+from typing import (Callable, List, Optional)
 
-from lal.ast import (Identifier, LetStatement, Program, ReturnStatement, Statement)
+from lal.ast import (
+    Expression,
+    Identifier, 
+    LetStatement, 
+    Program, 
+    ReturnStatement, 
+    Statement)
 from lal.lexer import Lexer
 from lal.token import (Token, TokenType)
+
+# Coloca alias a tipos de datos, como funciones (Callable)
+PrefixParseFn = Callable[[], Optional[Expression]] # tipo de dato para: funciones que no reciben parámetros y opcionalmente regresa una expresion
+InfixParseFn = Callable[[Expression], Optional[Expression]] # tipo de dato para: funciones que reciben una expresión como parámetro y opcionalmente regresan una expresión
+PrefixParseFns = dict[TokenType, PrefixParseFn] # un diccionario donde la llave es un token type y el valor una función de parseo prefijo
+InfixParseFns = dict[TokenType, InfixParseFn] # un diccionario donde la llave es un token type y el valor una función de parseo infijo
 
 class Parser:
     def __init__(self, lexer: Lexer) -> None:
@@ -10,6 +22,9 @@ class Parser:
         self._current_token: Optional[Token] = None
         self._peek_token: Optional[Token] = None
         self._errors: List[str] = []
+
+        self._infix_parse_fns: InfixParseFns = self._register_infix_fns()
+        self._prefix_parse_fns: PrefixParseFns = self._register_prefix_fns()
 
         self._advance_tokens()
         self._advance_tokens()
@@ -88,3 +103,9 @@ class Parser:
             return self._parse_return_statement()
         else:
             return None
+
+    def _register_infix_fns(self) -> InfixParseFns:
+        return {}
+
+    def _register_prefix_fns(self) -> PrefixParseFns:
+        return {}
