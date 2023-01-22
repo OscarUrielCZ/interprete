@@ -1,4 +1,4 @@
-from typing import (Callable, List, Optional)
+from typing import (Callable, Dict, List, Optional)
 
 from lal.ast import (
     Expression,
@@ -13,8 +13,8 @@ from lal.token import (Token, TokenType)
 # Coloca alias a tipos de datos, como funciones (Callable)
 PrefixParseFn = Callable[[], Optional[Expression]] # tipo de dato para: funciones que no reciben parámetros y opcionalmente regresa una expresion
 InfixParseFn = Callable[[Expression], Optional[Expression]] # tipo de dato para: funciones que reciben una expresión como parámetro y opcionalmente regresan una expresión
-PrefixParseFns = dict[TokenType, PrefixParseFn] # un diccionario donde la llave es un token type y el valor una función de parseo prefijo
-InfixParseFns = dict[TokenType, InfixParseFn] # un diccionario donde la llave es un token type y el valor una función de parseo infijo
+PrefixParseFns = Dict[TokenType, PrefixParseFn] # un diccionario donde la llave es un token type y el valor una función de parseo prefijo
+InfixParseFns = Dict[TokenType, InfixParseFn] # un diccionario donde la llave es un token type y el valor una función de parseo infijo
 
 class Parser:
     def __init__(self, lexer: Lexer) -> None:
