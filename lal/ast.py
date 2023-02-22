@@ -17,7 +17,7 @@ class ASTNode(ABC):
 
 class Statement(ASTNode):
     def __init__(self, token: Token) -> None:
-        self.token= token
+        self.token = token
 
     def token_literal(self) -> str:
         return self.token.literal

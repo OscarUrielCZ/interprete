@@ -115,7 +115,7 @@ class ParserTest(TestCase):
                                 expression: Expression,
                                 expected_value: Any) -> None:
         
-        value_type: Type = type(expression)
+        value_type: Type = type(expected_value)
 
         if value_type == str:
             self._test_identifier(expression, expected_value)
@@ -128,4 +128,4 @@ class ParserTest(TestCase):
         self.assertIsInstance(expression, Identifier)
         identifier = cast(Identifier, expression)
         self.assertEqual(identifier.value, expected_value)
-        self.assertEqual(identifier.token_literal, expected_value)
+        self.assertEqual(identifier.token_literal(), expected_value)

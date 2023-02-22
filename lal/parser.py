@@ -1,7 +1,10 @@
+from enum import IntEnum
+
 from typing import (Callable, Dict, List, Optional)
 
 from lal.ast import (
     Expression,
+    ExpressionStatement,
     Identifier, 
     LetStatement, 
     Program, 
@@ -9,6 +12,15 @@ from lal.ast import (
     Statement)
 from lal.lexer import Lexer
 from lal.token import (Token, TokenType)
+
+class Precedence(IntEnum):
+    LOWEST = 1
+    EQUALS = 2
+    LESSGREATER = 3
+    SUM = 4
+    PRODUCT = 5
+    PREFIX = 6
+    CALL = 7
 
 # Coloca alias a tipos de datos, como funciones (Callable)
 PrefixParseFn = Callable[[], Optional[Expression]] # tipo de dato para: funciones que no reciben parámetros y opcionalmente regresa una expresion
@@ -65,6 +77,36 @@ class Parser:
         error = f"Expected token of type {token_type}, but found {self._peek_token.token_type}"
         self._errors.append(error)
     
+    def _parse_expression(self, precedence: Precedence) -> Optional[Expression]:
+        assert self._current_token is not None
+
+        try:
+            prefix_parse_fn = self._prefix_parse_fns[self._current_token.token_type]
+        except KeyError:
+            return None
+
+        left_expression = prefix_parse_fn()
+
+        return left_expression
+
+    def _parse_expression_statement(self) -> Optional[ExpressionStatement]:
+        assert self._current_token is not None
+        
+        expression_statement = ExpressionStatement(token=self._current_token)
+        expression_statement.expression = self._parse_expression(Precedence.LOWEST)
+
+        assert self._peek_token is not None
+
+        if self._peek_token.token_type == TokenType.SEMICOLON:
+            self._advance_tokens()
+
+        return expression_statement
+
+    def _parse_identifier(self) -> Identifier:
+        assert self._current_token is not None
+        return Identifier(token=self._current_token,
+                            value=self._current_token.literal)
+
     def _parse_let_statement(self) -> Optional[LetStatement]:
         assert self._current_token is not None
         let_statement = LetStatement(token=self._current_token)
@@ -72,14 +114,15 @@ class Parser:
         if not self._expected_token(TokenType.IDENTIFIER):
             return None
 
-        let_statement.name =  Identifier(token=self._current_token, value=self._current_token.literal)
+        let_statement.name =  self._parse_identifier()
 
         if not self._expected_token(TokenType.ASSIGN):
             return None
 
         # TODO terminar cuando sepamos parsar expresiones
+
         while self._current_token.token_type != TokenType.SEMICOLON:
-            self._advance_tokens();
+            self._advance_tokens()
 
         return let_statement
 
@@ -102,10 +145,12 @@ class Parser:
         elif self._current_token.token_type == TokenType.RETURN:
             return self._parse_return_statement()
         else:
-            return None
+            return self._parse_expression_statement()
 
     def _register_infix_fns(self) -> InfixParseFns:
         return {}
 
     def _register_prefix_fns(self) -> PrefixParseFns:
-        return {}
+        return {
+            TokenType.IDENTIFIER: self._parse_identifier
+        }
