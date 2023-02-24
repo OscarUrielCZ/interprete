@@ -5,12 +5,14 @@ from lal.ast import (
     Expression,
     ExpressionStatement,
     Identifier,
+    Integer,
     LetStatement, 
     Program, 
     ReturnStatement
 )
 from lal.lexer import Lexer
 from lal.parser import Parser
+from lal.token import (Token, TokenType)
 
 class ParserTest(TestCase):
     def test_parse_program(self) -> None:
@@ -103,6 +105,31 @@ class ParserTest(TestCase):
         assert expression_statement.expression is not None
         self._test_literal_expression(expression_statement.expression, "foobar")
 
+    def test_integer_expression(self) -> None:
+        source: str = "5;"
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program: Program = parser.parse_program()
+        self._test_program_statements(parser, program)
+
+        expression_statement = cast(ExpressionStatement, program.statements[0])
+
+        assert expression_statement.expression is not None
+        self._test_literal_expression(expression_statement.expression, 5)
+
+    def test_let_integer_expression(self) -> None:
+        program: Program = Program(statements=[
+            LetStatement(
+                token = Token(token_type=TokenType.LET, literal="int"),
+                name = Identifier(token=Token(TokenType.IDENTIFIER, "age"), value="age"),
+                value = Integer(token=Token(TokenType.INT, "23"), value=23)
+            )
+        ])
+
+        self.assertEqual(str(program), "int age = 23;")
+
+
     def _test_program_statements(self,
                                 parser: Parser,
                                 program: Program,
@@ -119,6 +146,8 @@ class ParserTest(TestCase):
 
         if value_type == str:
             self._test_identifier(expression, expected_value)
+        elif value_type == int:
+            self._test_integer(expression, expected_value)
         else:
             self.fail(f"Unhandled type of expression. Got={value_type}")
 
@@ -129,3 +158,8 @@ class ParserTest(TestCase):
         identifier = cast(Identifier, expression)
         self.assertEqual(identifier.value, expected_value)
         self.assertEqual(identifier.token_literal(), expected_value)
+
+    def _test_integer(self, expression: Expression, expected_value: int) -> None:
+        integer = cast(Integer, expression)
+        self.assertEqual(integer.value, expected_value)
+        self.assertEqual(integer.token.literal, str(expected_value))
